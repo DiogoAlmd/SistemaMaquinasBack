@@ -1,5 +1,4 @@
-﻿using Azure.Core;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
 using SistemaMaquinas.Classes;
 using SistemaMaquinas.Models;
@@ -20,7 +19,6 @@ namespace SistemaMaquinas.Controllers
             _connectionString = configuration.GetValue<string>("ConnectionStrings:SqlConnection");
             _logger = logger;
         }
-
 
         [HttpGet]
         public async Task<IActionResult> ObterDados()
@@ -78,6 +76,36 @@ namespace SistemaMaquinas.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, $"Erro ao alterar o motivo do serial {request.Serial} da tabela DEFEITOS");
+                return StatusCode(500);
+            }
+        }
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> MoverParaDevolucao([FromBody] MoverParaDevolucao request)
+        {
+            try
+            {
+                using (var conexao = new SqlConnection(_connectionString))
+                {
+                    await conexao.OpenAsync();
+
+                    using (var comando = new SqlCommand($@"INSERT INTO Historico(SERIAL, ORIGEM, DESTINO, STATUS, SITUACAO, LOCAL, OPERADORA, DataRetirada, MaquinaPropriaDoCliente, Motivo, CAIXA, DATA, CNPF, DataAlteracao)
+                                                           SELECT SERIAL, 'DEFEITOS', 'DEVOLUCAO', '', '', '', '', '', '', Motivo, CAIXA, DATA, '', GETDATE() FROM DEFEITOS
+                                                           WHERE SERIAL = '{request.Serial}'
+                                                           INSERT INTO DEVOLUCAO(SERIAL, CAIXA, DATA)
+                                                           SELECT '{request.Serial}', '{request.Caixa}', GETDATE() FROM DEFEITOS WHERE SERIAL = '{request.Serial}'
+                                                           DELETE FROM DEFEITOS WHERE SERIAL = '{request.Serial}';", conexao)
+                                                         )
+                    {
+                        await comando.ExecuteNonQueryAsync();
+                    }
+                }
+
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Erro ao mover o serial {request.Serial} para a tabela DEVOLUCAO");
                 return StatusCode(500);
             }
         }

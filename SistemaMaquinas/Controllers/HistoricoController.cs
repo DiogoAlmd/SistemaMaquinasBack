@@ -171,6 +171,16 @@ namespace SistemaMaquinas.Controllers
                                 await comando.ExecuteNonQueryAsync();
                             }
                             break;
+                        case "DEVOLUCAO":
+                            using (var comando = new SqlCommand($@"INSERT INTO DEVOLUCAO(SERIAL, CAIXA, DATA)
+                                                                   SELECT SERIAL, CAIXA, DATA FROM Historico WHERE id = '{id}'
+                                                                   DELETE FROM {destino} WHERE SERIAL = '{serial}'
+                                                                   DELETE FROM HISTORICO WHERE SERIAL = '{serial}';", conexao)
+                                                                )
+                            {
+                                await comando.ExecuteNonQueryAsync();
+                            }
+                            break;
                         default: return StatusCode(404);
                     }
                 }

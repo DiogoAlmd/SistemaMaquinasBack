@@ -5,7 +5,7 @@ https://go.microsoft.com/fwlink/?LinkID=208121.
 <Project>
   <PropertyGroup>
     <_PublishTargetUrl>C:\SistemaMaquinasV1</_PublishTargetUrl>
-    <History>True|2023-05-15T18:32:05.2960387Z;True|2023-05-15T14:44:43.2202627-03:00;True|2023-05-10T16:46:48.9868145-03:00;True|2023-05-09T15:17:17.6492704-03:00;True|2023-05-03T16:14:18.4171743-03:00;</History>
+    <History>True|2023-05-16T19:24:31.1189023Z;True|2023-05-16T15:23:15.8912545-03:00;True|2023-05-15T15:32:05.2960387-03:00;True|2023-05-15T14:44:43.2202627-03:00;True|2023-05-10T16:46:48.9868145-03:00;True|2023-05-09T15:17:17.6492704-03:00;True|2023-05-03T16:14:18.4171743-03:00;</History>
     <LastFailureDetails />
   </PropertyGroup>
 </Project>

@@ -53,6 +53,7 @@ namespace SistemaMaquinas.Controllers
                 }
             }
         }
+
         [HttpPost("[action]")]
         public async Task<IActionResult> MoverParaDefeito([FromBody] MoverParaDefeito request)
         {
