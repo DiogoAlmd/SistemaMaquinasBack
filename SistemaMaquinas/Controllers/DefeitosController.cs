@@ -127,6 +127,8 @@ namespace SistemaMaquinas.Controllers
                                                          SUM(CASE WHEN MOTIVO = 'Conectividade de chips' THEN 1 ELSE 0 END) AS 'Conectividade de chips',
                                                          SUM(CASE WHEN MOTIVO = 'Estética' THEN 1 ELSE 0 END) AS 'Estética',
                                                          SUM(CASE WHEN MOTIVO = 'Defeito de Impressão' THEN 1 ELSE 0 END) AS 'Defeito de Impressão',
+                                                         SUM(CASE WHEN MOTIVO = 'Teclado' THEN 1 ELSE 0 END) AS 'Teclado',
+                                                         SUM(CASE WHEN MOTIVO = 'Tela quebrada' THEN 1 ELSE 0 END) AS 'Tela quebrada',
                                                          COUNT(SERIAL) AS Total
                                                        FROM DEFEITOS", conexao))
                 {
@@ -143,6 +145,8 @@ namespace SistemaMaquinas.Controllers
                                 ConectividadeDeChips = leitor["Conectividade de chips"].ToString(),
                                 Estetica = leitor["Estética"].ToString(),
                                 DefeitoDeImpressao = leitor["Defeito de Impressão"].ToString(),
+                                Teclado = leitor["Teclado"].ToString(),
+                                TelaQuebrada = leitor["Tela quebrada"].ToString(),
                                 Total = leitor["Total"].ToString()
                             });
                         }

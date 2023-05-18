@@ -9,7 +9,8 @@
         public string? ConectividadeDeChips { get; set; }
         public string? Estetica { get; set; }
         public string? DefeitoDeImpressao { get; set; }
-
+        public string? Teclado { get; set; }
+        public string? TelaQuebrada { get; set; }
         public string? Total { get; set; }
     }
 }
