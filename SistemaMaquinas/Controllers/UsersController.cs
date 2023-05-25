@@ -1,0 +1,103 @@
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.Data.SqlClient;
+using SistemaMaquinas.Models;
+using Microsoft.AspNetCore.Authorization;
+using SistemaMaquinas.Services;
+
+namespace SistemaMaquinas.Controllers
+{
+    [Route("api/[controller]")]
+    [ApiController]
+    public class UsersController : ControllerBase
+    {
+        private readonly ILogger<UsersController> _logger;
+        private readonly string _connectionString;
+
+        public UsersController(ILogger<UsersController> logger)
+        {
+            var builder = new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory()).AddJsonFile("appsettings.json", optional: false);
+            IConfigurationRoot configuration = builder.Build();
+            _connectionString = configuration.GetValue<string>("ConnectionStrings:SqlConnection");
+            _logger = logger;
+        }
+
+        [HttpPost]
+        [Route("login")]
+        [AllowAnonymous]
+        public async Task<ActionResult<dynamic>> Authenticate([FromBody] Users model)
+        {
+            var dados = new List<Users>();
+            using (var conexao = new SqlConnection(_connectionString))
+            {
+                await conexao.OpenAsync();
+
+                using (var comando = new SqlCommand("SELECT * FROM users", conexao))
+                {
+                    using (var leitor = await comando.ExecuteReaderAsync())
+                    {
+                        while (await leitor.ReadAsync())
+                        {
+                            dados.Add(new Users
+                            {
+                                Login = leitor["loginUsuario"].ToString(),
+                                Senha = leitor["senhaUsuario"].ToString(),
+                                Funcao = leitor["funcao"].ToString(),
+                                Store = leitor["store"].ToString()
+                            });
+                        }
+                    }
+                }
+
+                var user = dados.FirstOrDefault(u => u.Login == model.Login && u.Senha == model.Senha);
+                if (user != null)
+                {
+                    var token = CriaToken.GenerateToken(user);
+
+                    //return Ok(new { token });
+
+                    user.Senha = "";
+                    return new
+                    {
+                        token = token
+                    };
+                }
+                else
+                {
+                    return NotFound(new { message = "Usuário ou senha inválidos" });
+                }
+            }
+        }
+
+        [HttpGet]
+        [Route("authenticated")]
+        [Authorize]
+        public string Authenticated() => String.Format("Autenticado - {0}", User.Identity.Name);
+
+
+        //[HttpGet("[action]/{user}/{password}")]
+        //public async Task<IActionResult> ObterDados(string user, string password)
+        //{
+        //    var dados = new List<Users>();
+
+        //    using (var conexao = new SqlConnection(_connectionString))
+        //    {
+        //        await conexao.OpenAsync();
+
+        //        using (var comando = new SqlCommand($"SELECT COUNT(*) AS 'isValid' FROM users where loginUsuario = '{user}' and senhaUsuario = '{password}'", conexao))
+        //        {
+        //            using (var leitor = await comando.ExecuteReaderAsync())
+        //            {
+        //                while (await leitor.ReadAsync())
+        //                {
+        //                    dados.Add(new Users
+        //                    {
+        //                        //IsValid = leitor["isValid"].ToString()
+        //                    });
+        //                }
+        //            }
+        //            return Ok(dados);
+        //        }
+        //    }
+        //}
+    }
+}
