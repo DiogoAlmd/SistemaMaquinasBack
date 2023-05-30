@@ -1,23 +1,23 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Diogo Almeida\\Desktop\\SistemaMaquinasBack\\SistemaMaquinas\\SistemaMaquinas\\SistemaMaquinas.csproj": {}
+    "C:\\Users\\JoaoRosa\\Documents\\SISTEMAMAQUINASV2\\BackEnd\\SistemaMaquinasBack\\SistemaMaquinas\\SistemaMaquinas.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Diogo Almeida\\Desktop\\SistemaMaquinasBack\\SistemaMaquinas\\SistemaMaquinas\\SistemaMaquinas.csproj": {
+    "C:\\Users\\JoaoRosa\\Documents\\SISTEMAMAQUINASV2\\BackEnd\\SistemaMaquinasBack\\SistemaMaquinas\\SistemaMaquinas.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Diogo Almeida\\Desktop\\SistemaMaquinasBack\\SistemaMaquinas\\SistemaMaquinas\\SistemaMaquinas.csproj",
+        "projectUniqueName": "C:\\Users\\JoaoRosa\\Documents\\SISTEMAMAQUINASV2\\BackEnd\\SistemaMaquinasBack\\SistemaMaquinas\\SistemaMaquinas.csproj",
         "projectName": "SistemaMaquinas",
-        "projectPath": "C:\\Users\\Diogo Almeida\\Desktop\\SistemaMaquinasBack\\SistemaMaquinas\\SistemaMaquinas\\SistemaMaquinas.csproj",
-        "packagesPath": "C:\\Users\\Diogo Almeida\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Diogo Almeida\\Desktop\\SistemaMaquinasBack\\SistemaMaquinas\\SistemaMaquinas\\obj\\",
+        "projectPath": "C:\\Users\\JoaoRosa\\Documents\\SISTEMAMAQUINASV2\\BackEnd\\SistemaMaquinasBack\\SistemaMaquinas\\SistemaMaquinas.csproj",
+        "packagesPath": "C:\\Users\\JoaoRosa\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\JoaoRosa\\Documents\\SISTEMAMAQUINASV2\\BackEnd\\SistemaMaquinasBack\\SistemaMaquinas\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\Diogo Almeida\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\JoaoRosa\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],

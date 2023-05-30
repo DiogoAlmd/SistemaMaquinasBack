@@ -5,5 +5,6 @@
         public string? serial { get; set; }
         public string? CNPF { get; set; }
         public string? empresa { get; set; }
+        public string? usuario { get; set; }
     }
 }

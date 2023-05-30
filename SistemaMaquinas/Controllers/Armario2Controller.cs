@@ -4,6 +4,7 @@ using SistemaMaquinas.Models;
 using SistemaMaquinas.Classes;
 using SistemaMaquinas.Repositories;
 using Microsoft.AspNetCore.Authorization;
+using Azure.Core;
 
 namespace SistemaMaquinas.Controllers
 {
@@ -53,8 +54,8 @@ namespace SistemaMaquinas.Controllers
             }
         }
 
-        [HttpPost("[action]/{serial}/{operadora}")]
-        public async Task<IActionResult> MoverParaArmario1(string serial, string operadora)
+        [HttpPost("[action]/{serial}/{operadora}/{propriedade}/{usuario}")]
+        public async Task<IActionResult> MoverParaArmario1(string serial, string operadora, string propriedade, string usuario)
         {
             try
             {
@@ -62,11 +63,13 @@ namespace SistemaMaquinas.Controllers
                 {
                     await conexao.OpenAsync();
 
-                    using (var comando = new SqlCommand($@"INSERT INTO Historico(SERIAL, ORIGEM, DESTINO, STATUS, SITUACAO, LOCAL, OPERADORA, DataRetirada, MaquinaPropriaDoCliente, CAIXA, DATA, CNPF, DataAlteracao)
-                                                           SELECT SERIAL, 'ARMARIO_2', 'ARMARIO_1', STATUS, SITUACAO, LOCAL, '', '', '', '', '', '', GETDATE() FROM ARMARIO_2
+                    using (var comando = new SqlCommand($@"DECLARE @usuario int
+                                                           SET @usuario = (SELECT idUsuario FROM users WHERE loginUsuario = '{usuario}')
+                                                           INSERT INTO Historico(SERIAL, ORIGEM, DESTINO, USUARIO, STATUS, SITUACAO, LOCAL, OPERADORA, DataRetirada, MaquinaPropriaDoCliente, CAIXA, DATA, CNPF, DataAlteracao)
+                                                           SELECT SERIAL, 'ARMARIO_2', 'ARMARIO_1', @usuario, STATUS, SITUACAO, LOCAL, '', '', '', '', '', '', GETDATE() FROM ARMARIO_2
                                                            WHERE SERIAL = '{serial}'
-                                                           INSERT INTO ARMARIO_1(SERIAL, STATUS, SITUACAO, LOCAL, OPERADORA)
-                                                           SELECT SERIAL, 'ATIVAÇÃO', 'TRATADO', LOCAL, '{operadora}' FROM ARMARIO_2 WHERE SERIAL = '{serial}'                                                            
+                                                           INSERT INTO ARMARIO_1(SERIAL, STATUS, SITUACAO, LOCAL, OPERADORA, MaquinaPropriaDoCliente)
+                                                           SELECT SERIAL, 'ATIVAÇÃO', 'TRATADO', LOCAL, '{operadora}', '{propriedade}' FROM ARMARIO_2 WHERE SERIAL = '{serial}'                                                            
                                                            DELETE FROM ARMARIO_2
                                                            WHERE SERIAL = '{serial}';", conexao)
                                                         )
@@ -89,8 +92,10 @@ namespace SistemaMaquinas.Controllers
         {
             try
             {
-                var sqlQuery = $@"INSERT INTO Historico(SERIAL, ORIGEM, DESTINO, STATUS, SITUACAO, LOCAL, OPERADORA, DataRetirada, MaquinaPropriaDoCliente, CAIXA, Motivo, DATA, CNPF, DataAlteracao)
-                                  SELECT SERIAL, 'ARMARIO_2', 'DEFEITOS', STATUS, SITUACAO, LOCAL, '', '', '', '', '', '', '', GETDATE() FROM ARMARIO_2
+                var sqlQuery = $@"DECLARE @usuario int
+                                  SET @usuario = (SELECT idUsuario FROM users WHERE loginUsuario = '{request.usuario}')
+                                  INSERT INTO Historico(SERIAL, ORIGEM, DESTINO, USUARIO, STATUS, SITUACAO, LOCAL, OPERADORA, DataRetirada, MaquinaPropriaDoCliente, CAIXA, Motivo, DATA, CNPF, DataAlteracao)
+                                  SELECT SERIAL, 'ARMARIO_2', 'DEFEITOS', @usuario, STATUS, SITUACAO, LOCAL, '', '', '', '', '', '', '', GETDATE() FROM ARMARIO_2
                                   WHERE SERIAL = '{request.serial}'
                                   INSERT INTO DEFEITOS(SERIAL, CAIXA, Motivo, DATA)
                                   SELECT SERIAL, '{request.caixa}', '{request.motivo}', GETDATE() FROM ARMARIO_2 WHERE SERIAL = '{request.serial}'

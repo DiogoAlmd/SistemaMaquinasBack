@@ -4,6 +4,7 @@ using SistemaMaquinas.Models;
 using SistemaMaquinas.Classes;
 using SistemaMaquinas.Repositories;
 using Microsoft.AspNetCore.Authorization;
+using Azure.Core;
 
 namespace SistemaMaquinas.Controllers
 {
@@ -52,8 +53,8 @@ namespace SistemaMaquinas.Controllers
                 }
             }
         }
-        [HttpPost("[action]/{serial}/{novaTabela}")]
-        public async Task<IActionResult> MoverParaNovaTabela(string serial, string novaTabela)
+        [HttpPost("[action]/{serial}/{novaTabela}/{usuario}")]
+        public async Task<IActionResult> MoverParaNovaTabela(string serial, string novaTabela, string usuario)
         {
             try
             {
@@ -64,8 +65,10 @@ namespace SistemaMaquinas.Controllers
                     switch (novaTabela)
                     {
                         case "ARMARIO_1":
-                            using (var comando = new SqlCommand($@"INSERT INTO Historico(SERIAL, ORIGEM, DESTINO, STATUS, SITUACAO, LOCAL, OPERADORA, DataRetirada, MaquinaPropriaDoCliente, CAIXA, DATA, CNPF, DataAlteracao)
-                                                                   SELECT SERIAL, 'ESTOQUE_AB', 'ARMARIO_1', STATUS, SITUACAO, LOCAL, '', '', '', '', '','', GETDATE() FROM ESTOQUE_AB WHERE SERIAL = '{serial}'
+                            using (var comando = new SqlCommand($@"DECLARE @usuario int
+                                                                   SET @usuario = (SELECT idUsuario FROM users WHERE loginUsuario = '{usuario}') 
+                                                                   INSERT INTO Historico(SERIAL, ORIGEM, DESTINO, USUARIO, STATUS, SITUACAO, LOCAL, OPERADORA, DataRetirada, MaquinaPropriaDoCliente, CAIXA, DATA, CNPF, DataAlteracao)
+                                                                   SELECT SERIAL, 'ESTOQUE_AB', 'ARMARIO_1', @usuario, STATUS, SITUACAO, LOCAL, '', '', '', '', '','', GETDATE() FROM ESTOQUE_AB WHERE SERIAL = '{serial}'
                                                                    INSERT INTO ARMARIO_1(SERIAL, STATUS, SITUACAO, LOCAL)
                                                                    SELECT SERIAL, 'ATIVAÇÃO', 'TRATADO', 'D3'
                                                                    FROM ESTOQUE_AB
@@ -79,8 +82,10 @@ namespace SistemaMaquinas.Controllers
                             break;
 
                         case "ARMARIO_3":
-                            using (var comando = new SqlCommand($@"INSERT INTO Historico(SERIAL, ORIGEM, DESTINO, STATUS, SITUACAO, LOCAL, OPERADORA, DataRetirada, MaquinaPropriaDoCliente, CAIXA, DATA, CNPF, DataAlteracao)
-                                                                   SELECT SERIAL, 'ESTOQUE_AB', 'ARMARIO_3', STATUS, SITUACAO, LOCAL, '', '', '', '', '','', GETDATE() FROM ESTOQUE_AB WHERE SERIAL = '{serial}'
+                            using (var comando = new SqlCommand($@"DECLARE @usuario int
+                                                                   SET @usuario = (SELECT idUsuario FROM users WHERE loginUsuario = '{usuario}') 
+                                                                   INSERT INTO Historico(SERIAL, ORIGEM, DESTINO, USUARIO, STATUS, SITUACAO, LOCAL, OPERADORA, DataRetirada, MaquinaPropriaDoCliente, CAIXA, DATA, CNPF, DataAlteracao)
+                                                                   SELECT SERIAL, 'ESTOQUE_AB', 'ARMARIO_3', @usuario, STATUS, SITUACAO, LOCAL, '', '', '', '', '','', GETDATE() FROM ESTOQUE_AB WHERE SERIAL = '{serial}'
                                                                    INSERT INTO ARMARIO_3(SERIAL, STATUS, SITUACAO, LOCAL)
                                                                    SELECT SERIAL, 'BRUTA', SITUACAO, 'D3'
                                                                    FROM ESTOQUE_AB
@@ -110,8 +115,10 @@ namespace SistemaMaquinas.Controllers
         {
             try
             {
-                var sqlQuery = $@"INSERT INTO Historico(SERIAL, ORIGEM, DESTINO, STATUS, SITUACAO, LOCAL, OPERADORA, DataRetirada, MaquinaPropriaDoCliente, Motivo, CAIXA, DATA, CNPF, DataAlteracao)
-                                  SELECT SERIAL, 'ESTOQUE_AB', 'DEFEITOS', STATUS, SITUACAO, LOCAL, '', '', '', '', '', '', '', GETDATE() FROM ESTOQUE_AB
+                var sqlQuery = $@"DECLARE @usuario int
+                                  SET @usuario = (SELECT idUsuario FROM users WHERE loginUsuario = '{request.usuario}') 
+                                  INSERT INTO Historico(SERIAL, ORIGEM, DESTINO, USUARIO, STATUS, SITUACAO, LOCAL, OPERADORA, DataRetirada, MaquinaPropriaDoCliente, Motivo, CAIXA, DATA, CNPF, DataAlteracao)
+                                  SELECT SERIAL, 'ESTOQUE_AB', 'DEFEITOS', @usuario, STATUS, SITUACAO, LOCAL, '', '', '', '', '', '', '', GETDATE() FROM ESTOQUE_AB
                                   WHERE SERIAL = '{request.serial}'
                                   INSERT INTO DEFEITOS(SERIAL, CAIXA, Motivo, DATA)
                                   SELECT SERIAL, '{request.caixa}', '{request.motivo}', GETDATE() FROM ESTOQUE_AB WHERE SERIAL = '{request.serial}'

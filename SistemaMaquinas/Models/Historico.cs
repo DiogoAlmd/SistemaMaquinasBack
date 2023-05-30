@@ -8,6 +8,7 @@ namespace SistemaMaquinas.Models
         public string? Serial { get; set; }
         public string? Origem { get; set; }
         public string? Destino { get; set; }
+        public string? Usuario { get; set; }
         public string? Status { get; set; }
         public string? Situacao { get; set; }
         public string? Local { get; set; }

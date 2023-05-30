@@ -61,8 +61,10 @@ namespace SistemaMaquinas.Controllers
                 {
                     await conexao.OpenAsync();
 
-                    using (var comando = new SqlCommand($@"INSERT INTO Historico(SERIAL, ORIGEM, DESTINO, STATUS, SITUACAO, LOCAL, OPERADORA, DataRetirada, MaquinaPropriaDoCliente, Motivo, CAIXA, DATA, CNPF, DataAlteracao)
-                                                           SELECT SERIAL, 'DEFEITOS', 'DEFEITOS', '', '', '', '', '', '', Motivo, CAIXA, DATA, '', GETDATE() FROM DEFEITOS
+                    using (var comando = new SqlCommand($@"DECLARE @usuario int
+                                                           SET @usuario = (SELECT idUsuario FROM users WHERE loginUsuario = '{request.usuario}') 
+                                                           INSERT INTO Historico(SERIAL, ORIGEM, DESTINO, USUARIO, STATUS, SITUACAO, LOCAL, OPERADORA, DataRetirada, MaquinaPropriaDoCliente, Motivo, CAIXA, DATA, CNPF, DataAlteracao)
+                                                           SELECT SERIAL, 'DEFEITOS', 'DEFEITOS', @usuario, '', '', '', '', '', '', Motivo, CAIXA, DATA, '', GETDATE() FROM DEFEITOS
                                                            WHERE SERIAL = '{request.Serial}'
                                                            UPDATE DEFEITOS
                                                            SET MOTIVO = '{request.NovoMotivo}'
@@ -91,8 +93,10 @@ namespace SistemaMaquinas.Controllers
                 {
                     await conexao.OpenAsync();
 
-                    using (var comando = new SqlCommand($@"INSERT INTO Historico(SERIAL, ORIGEM, DESTINO, STATUS, SITUACAO, LOCAL, OPERADORA, DataRetirada, MaquinaPropriaDoCliente, Motivo, CAIXA, DATA, CNPF, DataAlteracao)
-                                                           SELECT SERIAL, 'DEFEITOS', 'DEVOLUCAO', '', '', '', '', '', '', Motivo, CAIXA, DATA, '', GETDATE() FROM DEFEITOS
+                    using (var comando = new SqlCommand($@"DECLARE @usuario int
+                                                           SET @usuario = (SELECT idUsuario FROM users WHERE loginUsuario = '{request.usuario}') 
+                                                           INTO Historico(SERIAL, ORIGEM, DESTINO, USUARIO, STATUS, SITUACAO, LOCAL, OPERADORA, DataRetirada, MaquinaPropriaDoCliente, Motivo, CAIXA, DATA, CNPF, DataAlteracao)
+                                                           SELECT SERIAL, 'DEFEITOS', 'DEVOLUCAO', @usuario, '', '', '', '', '', '', Motivo, CAIXA, DATA, '', GETDATE() FROM DEFEITOS
                                                            WHERE SERIAL = '{request.Serial}'
                                                            INSERT INTO DEVOLUCAO(SERIAL, CAIXA, DATA)
                                                            SELECT '{request.Serial}', '{request.Caixa}', GETDATE() FROM DEFEITOS WHERE SERIAL = '{request.Serial}'
@@ -129,6 +133,8 @@ namespace SistemaMaquinas.Controllers
                                                          SUM(CASE WHEN MOTIVO = 'Conectividade de chips' THEN 1 ELSE 0 END) AS 'Conectividade de chips',
                                                          SUM(CASE WHEN MOTIVO = 'Estética' THEN 1 ELSE 0 END) AS 'Estética',
                                                          SUM(CASE WHEN MOTIVO = 'Defeito de Impressão' THEN 1 ELSE 0 END) AS 'Defeito de Impressão',
+                                                         SUM(CASE WHEN MOTIVO = 'Teclado' THEN 1 ELSE 0 END) AS 'Teclado',
+                                                         SUM(CASE WHEN MOTIVO = 'Tela quebrada' THEN 1 ELSE 0 END) AS 'Tela quebrada',
                                                          COUNT(SERIAL) AS Total
                                                        FROM DEFEITOS", conexao))
                 {
@@ -145,6 +151,8 @@ namespace SistemaMaquinas.Controllers
                                 ConectividadeDeChips = leitor["Conectividade de chips"].ToString(),
                                 Estetica = leitor["Estética"].ToString(),
                                 DefeitoDeImpressao = leitor["Defeito de Impressão"].ToString(),
+                                Teclado = leitor["Teclado"].ToString(),
+                                TelaQuebrada = leitor["Tela quebrada"].ToString(),
                                 Total = leitor["Total"].ToString()
                             });
                         }

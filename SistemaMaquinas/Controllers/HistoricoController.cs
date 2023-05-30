@@ -44,6 +44,7 @@ namespace SistemaMaquinas.Controllers
                                 Serial = leitor["SERIAL"].ToString(),
                                 Origem = leitor["ORIGEM"].ToString(),
                                 Destino= leitor["DESTINO"].ToString(),
+                                Usuario = leitor["USUARIO"].ToString(),
                                 Status = leitor["STATUS"].ToString(),
                                 Situacao = leitor["SITUACAO"].ToString(),
                                 Local = leitor["LOCAL"].ToString(),

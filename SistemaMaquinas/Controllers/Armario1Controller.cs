@@ -4,6 +4,7 @@ using SistemaMaquinas.Models;
 using SistemaMaquinas.Classes;
 using SistemaMaquinas.Repositories;
 using Microsoft.AspNetCore.Authorization;
+using Azure.Core;
 
 namespace SistemaMaquinas.Controllers
 {
@@ -61,10 +62,12 @@ namespace SistemaMaquinas.Controllers
         {
             try
             {
-                var sqlQuery = $@"INSERT INTO DEFEITOS(SERIAL, CAIXA, Motivo, DATA)
+                var sqlQuery = $@"DECLARE @usuario int
+                                SET @usuario = (SELECT idUsuario FROM users WHERE loginUsuario = '{request.usuario}') 
+                                INSERT INTO DEFEITOS(SERIAL, CAIXA, Motivo, DATA)
                                 SELECT SERIAL, '{request.caixa}', '{request.motivo}',GETDATE() FROM ARMARIO_1 WHERE SERIAL = '{request.serial}'
-                                INSERT INTO Historico(SERIAL, ORIGEM, DESTINO, STATUS, SITUACAO, LOCAL, OPERADORA, DataRetirada, MaquinaPropriaDoCliente, CAIXA,  MOTIVO, DATA, CNPF, DataAlteracao)
-                                SELECT SERIAL, 'ARMARIO_1', 'DEFEITOS', STATUS, SITUACAO, LOCAL, OPERADORA, '', MaquinaPropriaDoCliente, '', '','', '', GETDATE() FROM ARMARIO_1
+                                INSERT INTO Historico(SERIAL, ORIGEM, DESTINO, USUARIO, STATUS, SITUACAO, LOCAL, OPERADORA, DataRetirada, MaquinaPropriaDoCliente, CAIXA,  MOTIVO, DATA, CNPF, DataAlteracao)
+                                SELECT SERIAL, 'ARMARIO_1', 'DEFEITOS', @usuario, STATUS, SITUACAO, LOCAL, OPERADORA, '', MaquinaPropriaDoCliente, '', '','', '', GETDATE() FROM ARMARIO_1
                                 where SERIAL = '{request.serial}'
                                 DELETE FROM ARMARIO_1 WHERE SERIAL = '{request.serial}';";
                 var repository = new DefeitosRepository(_connectionString, _logger, sqlQuery);
@@ -87,10 +90,12 @@ namespace SistemaMaquinas.Controllers
                 {
                     await conexao.OpenAsync();
 
-                    using (var comando = new SqlCommand($@"INSERT INTO MaquinasNosClientes(SERIAL, CNPF, EMPRESA, DATA)
+                    using (var comando = new SqlCommand($@"DECLARE @usuario int
+                                                          SET @usuario = (SELECT idUsuario FROM users WHERE loginUsuario = '{request.usuario}') 
+                                                          INSERT INTO MaquinasNosClientes(SERIAL, CNPF, EMPRESA, DATA)
                                                           SELECT SERIAL, '{request.CNPF}', '{request.empresa}',GETDATE() FROM ARMARIO_1 WHERE SERIAL = '{request.serial}'
-                                                          INSERT INTO Historico(SERIAL, ORIGEM, DESTINO, STATUS, SITUACAO, LOCAL, OPERADORA, DataRetirada, MaquinaPropriaDoCliente, CAIXA, DATA, CNPF, DataAlteracao)
-                                                          SELECT SERIAL, 'ARMARIO_1', 'MaquinasNosClientes', STATUS, SITUACAO, LOCAL, OPERADORA, '', MaquinaPropriaDoCliente, '', '', '', GETDATE() FROM ARMARIO_1
+                                                          INSERT INTO Historico(SERIAL, ORIGEM, DESTINO, USUARIO, STATUS, SITUACAO, LOCAL, OPERADORA, DataRetirada, MaquinaPropriaDoCliente, CAIXA, DATA, CNPF, DataAlteracao)
+                                                          SELECT SERIAL, 'ARMARIO_1', 'MaquinasNosClientes', @usuario, STATUS, SITUACAO, LOCAL, OPERADORA, '', MaquinaPropriaDoCliente, '', '', '', GETDATE() FROM ARMARIO_1
                                                           WHERE SERIAL = '{request.serial}'
                                                           DELETE FROM ARMARIO_1 WHERE SERIAL = '{request.serial}';", conexao)
                                                         )
@@ -148,16 +153,18 @@ namespace SistemaMaquinas.Controllers
             }
         }
 
-        [HttpPost("[action]/{serial}/{campo}")]
-        public async Task<IActionResult> AlterarCampo(string serial, string campo, string? valor)
+        [HttpPost("[action]/{serial}/{campo}/{usuario}")]
+        public async Task<IActionResult> AlterarCampo(string serial, string campo, string usuario, string? valor)
         {
             try
             {
                 using (var conexao = new SqlConnection(_connectionString))
                 {
                     await conexao.OpenAsync();
-                    using (var comando = new SqlCommand($@"INSERT INTO Historico(SERIAL, ORIGEM, DESTINO, STATUS, SITUACAO, LOCAL, OPERADORA, DataRetirada, MaquinaPropriaDoCliente, CAIXA, DATA, CNPF, DataAlteracao)
-                                                           SELECT SERIAL, 'ARMARIO_1', 'ARMARIO_1', STATUS, SITUACAO, LOCAL, OPERADORA, '', MaquinaPropriaDoCliente, '', '', '', GETDATE() FROM ARMARIO_1
+                    using (var comando = new SqlCommand($@"DECLARE @usuario int
+                                                           SET @usuario = (SELECT idUsuario FROM users WHERE loginUsuario = '{usuario}') 
+                                                           INSERT INTO Historico(SERIAL, ORIGEM, DESTINO, USUARIO, STATUS, SITUACAO, LOCAL, OPERADORA, DataRetirada, MaquinaPropriaDoCliente, CAIXA, DATA, CNPF, DataAlteracao)
+                                                           SELECT SERIAL, 'ARMARIO_1', 'ARMARIO_1', @usuario, STATUS, SITUACAO, LOCAL, OPERADORA, '', MaquinaPropriaDoCliente, '', '', '', GETDATE() FROM ARMARIO_1
                                                            WHERE SERIAL = '{serial}'
                                                            UPDATE ARMARIO_1 set {campo} = '{valor}' where SERIAL = '{serial}';", conexao))
                     {
@@ -182,8 +189,10 @@ namespace SistemaMaquinas.Controllers
                 using(var conexao = new SqlConnection(_connectionString))
                 {
                     await conexao.OpenAsync();
-                    using (var comando = new SqlCommand($@"INSERT INTO Historico(SERIAL, ORIGEM, DESTINO, STATUS, SITUACAO, LOCAL, OPERADORA, DataRetirada, MaquinaPropriaDoCliente, CAIXA, DATA, CNPF, DataAlteracao)
-                                                           SELECT SERIAL, 'ARMARIO_1', 'EstoqueEstrangeiro', STATUS, SITUACAO, LOCAL, OPERADORA, '', MaquinaPropriaDoCliente, '', '', '', GETDATE() FROM ARMARIO_1
+                    using (var comando = new SqlCommand($@"DECLARE @usuario int
+                                                           SET @usuario = (SELECT idUsuario FROM users WHERE loginUsuario = '{request.usuario}') 
+                                                           INSERT INTO Historico(SERIAL, ORIGEM, DESTINO, USUARIO, STATUS, SITUACAO, LOCAL, OPERADORA, DataRetirada, MaquinaPropriaDoCliente, CAIXA, DATA, CNPF, DataAlteracao)
+                                                           SELECT SERIAL, 'ARMARIO_1', 'EstoqueEstrangeiro', @usuario, STATUS, SITUACAO, LOCAL, OPERADORA, '', MaquinaPropriaDoCliente, '', '', '', GETDATE() FROM ARMARIO_1
                                                            WHERE SERIAL = '{request.serial}'
                                                            INSERT INTO EstoqueEstrangeiro(SERIAL, LOCAL)
                                                            SELECT SERIAL, '{request.local}' from ARMARIO_1 WHERE SERIAL = '{request.serial}'

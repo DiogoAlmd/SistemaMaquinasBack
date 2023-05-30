@@ -21,7 +21,7 @@ namespace SistemaMaquinas.Services
                 {
                     new Claim(ClaimTypes.Name, user.Login.ToString()),
                     new Claim(ClaimTypes.Role, user.Funcao.ToString()),
-                    new Claim(ClaimTypes.Locality, user.Store.ToString())
+                    new Claim(ClaimTypes.GroupSid , user.Store.ToString())
                 }),
                 Expires = DateTime.UtcNow.AddHours(2),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
