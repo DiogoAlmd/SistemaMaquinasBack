@@ -54,8 +54,8 @@ namespace SistemaMaquinas.Controllers
             }
         }
 
-        [HttpPost("[action]/{serial}/{usuario}")]
-        public async Task<IActionResult> MoverParaArmario1(string serial, string usuario)
+        [HttpPost("[action]/{serial}/{operadora}/{propriedade}/{usuario}")]
+        public async Task<IActionResult> MoverParaArmario1(string serial, string operadora, string propriedade, string usuario)
         {
             try
             {
@@ -68,10 +68,8 @@ namespace SistemaMaquinas.Controllers
                                                            INSERT INTO Historico(SERIAL, ORIGEM, DESTINO, USUARIO, STATUS, SITUACAO, LOCAL, OPERADORA, DataRetirada, MaquinaPropriaDoCliente, CAIXA, DATA, CNPF, DataAlteracao)
                                                            SELECT SERIAL, 'ARMARIO_3', 'ARMARIO_1', @usuario, STATUS, SITUACAO, LOCAL, '', '', '', '', '', '', GETDATE() FROM ARMARIO_3
                                                            WHERE SERIAL = '{serial}'
-                                                           INSERT INTO ARMARIO_1(SERIAL, STATUS, SITUACAO, LOCAL)
-                                                           SELECT SERIAL, 'ATIVAÇÃO', 'TRATADO', LOCAL
-                                                           FROM ARMARIO_3
-                                                           WHERE SERIAL = '{serial}'
+                                                           INSERT INTO ARMARIO_1(SERIAL, STATUS, SITUACAO, LOCAL, OPERADORA, MaquinaPropriaDoCliente)
+                                                           SELECT SERIAL, 'ATIVAÇÃO', 'TRATADO', LOCAL, '{operadora}', '{propriedade}' FROM ARMARIO_3 WHERE SERIAL = '{serial}'                                                            
                                                            DELETE FROM ARMARIO_3
                                                            WHERE SERIAL = '{serial}';", conexao)
                                                         )

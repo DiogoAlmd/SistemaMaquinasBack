@@ -54,7 +54,7 @@ namespace SistemaMaquinas.Controllers
             }
         }
         [HttpPost("[action]/{serial}/{novaTabela}/{usuario}")]
-        public async Task<IActionResult> MoverParaNovaTabela(string serial, string novaTabela, string usuario)
+        public async Task<IActionResult> MoverParaNovaTabela(string serial, string novaTabela, string usuario, string propriedade, string operadora)
         {
             try
             {
@@ -69,10 +69,8 @@ namespace SistemaMaquinas.Controllers
                                                                    SET @usuario = (SELECT idUsuario FROM users WHERE loginUsuario = '{usuario}') 
                                                                    INSERT INTO Historico(SERIAL, ORIGEM, DESTINO, USUARIO, STATUS, SITUACAO, LOCAL, OPERADORA, DataRetirada, MaquinaPropriaDoCliente, CAIXA, DATA, CNPF, DataAlteracao)
                                                                    SELECT SERIAL, 'ESTOQUE_AB', 'ARMARIO_1', @usuario, STATUS, SITUACAO, LOCAL, '', '', '', '', '','', GETDATE() FROM ESTOQUE_AB WHERE SERIAL = '{serial}'
-                                                                   INSERT INTO ARMARIO_1(SERIAL, STATUS, SITUACAO, LOCAL)
-                                                                   SELECT SERIAL, 'ATIVAÇÃO', 'TRATADO', 'D3'
-                                                                   FROM ESTOQUE_AB
-                                                                   WHERE SERIAL = '{serial}'
+                                                                   INSERT INTO ARMARIO_1(SERIAL, STATUS, SITUACAO, LOCAL, OPERADORA, MaquinaPropriaDoCliente)
+                                                                   SELECT SERIAL, 'ATIVAÇÃO', 'TRATADO', LOCAL, '{operadora}', '{propriedade}' FROM ESTOQUE_AB WHERE SERIAL = '{serial}'                                                            
                                                                    DELETE FROM ESTOQUE_AB
                                                                    WHERE SERIAL = '{serial}';", conexao)
                                                                 )
