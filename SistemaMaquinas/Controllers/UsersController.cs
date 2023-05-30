@@ -71,33 +71,9 @@ namespace SistemaMaquinas.Controllers
         [HttpGet]
         [Route("authenticated")]
         [Authorize]
-        public string Authenticated() => String.Format("Autenticado - {0}", User.Identity.Name);
-
-
-        //[HttpGet("[action]/{user}/{password}")]
-        //public async Task<IActionResult> ObterDados(string user, string password)
-        //{
-        //    var dados = new List<Users>();
-
-        //    using (var conexao = new SqlConnection(_connectionString))
-        //    {
-        //        await conexao.OpenAsync();
-
-        //        using (var comando = new SqlCommand($"SELECT COUNT(*) AS 'isValid' FROM users where loginUsuario = '{user}' and senhaUsuario = '{password}'", conexao))
-        //        {
-        //            using (var leitor = await comando.ExecuteReaderAsync())
-        //            {
-        //                while (await leitor.ReadAsync())
-        //                {
-        //                    dados.Add(new Users
-        //                    {
-        //                        //IsValid = leitor["isValid"].ToString()
-        //                    });
-        //                }
-        //            }
-        //            return Ok(dados);
-        //        }
-        //    }
-        //}
+        public async Task<IActionResult> verificaToken()
+        {
+            return Ok();
+        }
     }
 }

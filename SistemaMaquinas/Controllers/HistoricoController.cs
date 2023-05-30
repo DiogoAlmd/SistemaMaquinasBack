@@ -32,7 +32,10 @@ namespace SistemaMaquinas.Controllers
             {
                 await conexao.OpenAsync();
 
-                using (var comando = new SqlCommand("SELECT * FROM Historico", conexao))
+                using (var comando = new SqlCommand($@"Select h.id, h.SERIAL, h.ORIGEM, h.DESTINO, h.STATUS,
+                                                       h.SITUACAO, h.LOCAL, h.OPERADORA, h.DataRetirada, h.MaquinaPropriaDoCliente, 
+                                                       h.CAIXA, h.DATA, h.CNPF, h.DataAlteracao, h.MOTIVO, h.EMPRESA, u.loginUsuario AS USUARIO 
+                                                       from Historico h left JOIN users u on h.USUARIO=u.idUsuario", conexao))
                 {
                     using (var leitor = await comando.ExecuteReaderAsync())
                     {
