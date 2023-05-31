@@ -95,7 +95,7 @@ namespace SistemaMaquinas.Controllers
 
                     using (var comando = new SqlCommand($@"DECLARE @usuario int
                                                            SET @usuario = (SELECT idUsuario FROM users WHERE loginUsuario = '{request.usuario}') 
-                                                           INTO Historico(SERIAL, ORIGEM, DESTINO, USUARIO, STATUS, SITUACAO, LOCAL, OPERADORA, DataRetirada, MaquinaPropriaDoCliente, Motivo, CAIXA, DATA, CNPF, DataAlteracao)
+                                                           INSERT INTO Historico(SERIAL, ORIGEM, DESTINO, USUARIO, STATUS, SITUACAO, LOCAL, OPERADORA, DataRetirada, MaquinaPropriaDoCliente, Motivo, CAIXA, DATA, CNPF, DataAlteracao)
                                                            SELECT SERIAL, 'DEFEITOS', 'DEVOLUCAO', @usuario, '', '', '', '', '', '', Motivo, CAIXA, DATA, '', GETDATE() FROM DEFEITOS
                                                            WHERE SERIAL = '{request.Serial}'
                                                            INSERT INTO DEVOLUCAO(SERIAL, CAIXA, DATA)

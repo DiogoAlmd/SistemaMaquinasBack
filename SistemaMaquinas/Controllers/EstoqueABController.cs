@@ -54,7 +54,7 @@ namespace SistemaMaquinas.Controllers
             }
         }
         [HttpPost("[action]/{serial}/{novaTabela}/{usuario}")]
-        public async Task<IActionResult> MoverParaNovaTabela(string serial, string novaTabela, string usuario, string propriedade, string operadora)
+        public async Task<IActionResult> MoverParaNovaTabela(string serial, string novaTabela, string usuario, string? propriedade, string? operadora)
         {
             try
             {
